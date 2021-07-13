@@ -55,4 +55,4 @@ platform:
 fips: ${FIPS}
 sshKey: ${SSH_KEY}
 publish: Internal
-pullSecret: {PULL_SECRET}
+pullSecret: ${PULL_SECRET}
