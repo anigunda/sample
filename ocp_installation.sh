@@ -54,7 +54,6 @@ function check_properties {
 # This function is used to generate a final install-config.yaml
 # The install-config.yaml generated here is further used as input to OCP creation
 function generate_config {
-	envsubst ${MASTER_INSTANCE_TYPE} ${WORKER_INSTANCE_TYPE} ${WORKER_COUNT} ${OCP_CLUSTER} < ${INSTALL_TEMPLATE} > ${INSTALL_TEMPLATE}
 	for EXP_PROPS in $(cat ${PROPERTY_FILE} | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" );
 	do
 		export ${EXP_PROPS}
