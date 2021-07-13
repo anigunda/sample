@@ -49,7 +49,7 @@ platform:
     subnets: 
     - ${PRIVATE_SUBNET1}
     - ${PRIVATE_SUBNET2}
-	- ${PRIVATE_SUBNET3}
+    - ${PRIVATE_SUBNET3}
     amiID: ${IMAGE_ID}
     hostedZone: ${HOSTED_ZONE}
 fips: ${FIPS}
