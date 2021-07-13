@@ -5,7 +5,7 @@
 ## Date:		7/12/2021
 ## Version:		1.0
 
-
+set -e
 # Helper function to print errors
 function print_error {
    local __err_msg="$1"
@@ -22,12 +22,19 @@ function print_info {
 # This function is used to check if the installer binary exists
 # The binary is further used to install the entire OCP setup
 function check_installer {
+	if [[ -f ${INSTALLER_TAR} ]]
+	then
+		print_info "Installer Archive Found: (${INSTALLER_TAR})"
+		print_info "Extracting to ${WORK_DIR}.."
+		tar xzf ${INSTALLER_TAR} --directory ${WORK_DIR}
+	else
+		print_error "Installer Archive Not-found: (${INSTALLER_TAR})"
+	fi
 	if [[ -f ${INSTALLER_FILE} ]]
 	then
 		print_info "Installer Binary Found: (${INSTALLER_FILE})"
-		print_info "Checking the version.."
-		OCP_VERSION=`${INSTALLER_FILE} --version`
-		print_info "${OCP_VERSION}"
+		OCP_VERSION=`${INSTALLER_FILE} version | head -1 | cut -f2 -d " "`
+		print_info "OpenShift Installer Version: ${OCP_VERSION}"
 	else
 		print_error "Installer Binary Not-found: (${INSTALLER_FILE})"
 	fi
@@ -47,6 +54,7 @@ function check_properties {
 # This function is used to generate a final install-config.yaml
 # The install-config.yaml generated here is further used as input to OCP creation
 function generate_config {
+	envsubst ${MASTER_INSTANCE_TYPE} ${WORKER_INSTANCE_TYPE} ${WORKER_COUNT} ${OCP_CLUSTER} < ${INSTALL_TEMPLATE} > ${INSTALL_TEMPLATE}
 	for EXP_PROPS in $(cat ${PROPERTY_FILE} | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" );
 	do
 		export ${EXP_PROPS}
@@ -62,11 +70,10 @@ function install_ocp {
 	echo "${INSTALLER_FILE} create cluster --dir=${INSTALL_DIR} --log-level=debug"
 }
 
-
 # Variables (both from Jenkins and Custom)
-WORK_DIR=`pwd`
-OCP_CLUSTER="test"
-INSTALL_DIR="opt/"
+WORK_DIR=${WORKSPACE}
+INSTALL_DIR=/opt/${OCP_CLUSTER}
+INSTALLER_TAR=${WORK_DIR}/openshift-install-linux.tar.gz
 INSTALLER_FILE=${WORK_DIR}/openshift-install
 PROPERTY_FILE=${WORK_DIR}/${OCP_CLUSTER}.properties
 INSTALL_TEMPLATE=${WORK_DIR}/install-config.template
