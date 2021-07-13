@@ -1,0 +1,58 @@
+apiVersion: v1
+baseDomain: ${BASE_DOMAIN}
+credentialsMode: Manual 
+controlPlane:   
+  hyperthreading: Enabled 
+  name: master
+  platform:
+    aws:
+      rootVolume:
+        size: ${MASTER_ROOT_VOL_SIZE}
+        type: ${MASTER_ROOT_VOL_TYPE}
+      type: ${MASTER_INSTANCE_TYPE}
+      zones:
+      - ${AZ1}
+      - ${AZ2}
+      - ${AZ3}
+  replicas: 3
+compute: 
+- hyperthreading: Enabled 
+  name: worker
+  platform:
+    aws:
+      rootVolume:
+        size: ${WORKER_ROOT_VOL_SIZE}
+        type: ${WORKER_ROOT_VOL_TYPE}
+      type: ${WORKER_INSTANCE_TYPE}
+      zones:
+      - ${AZ1}
+      - ${AZ2}
+      - ${AZ3}
+  replicas: ${WORKER_COUNT}
+metadata:
+  name: ${OCP_CLUSTER_NAME}
+networking:
+  clusterNetwork:
+  - cidr: ${CIDR_CLUSTER}
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: ${CIDR_PRIVATE1}
+  - cidr: ${CIDR_PRIVATE2}
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - ${CIDR_SERVICE}
+platform:
+  aws:
+    region: ${OCP_REGION}
+    userTags:
+      BillingCode: ${BILLING_CODE}
+    subnets: 
+    - ${PRIVATE_SUBNET1}
+    - ${PRIVATE_SUBNET2}
+	- ${PRIVATE_SUBNET3}
+    amiID: ${IMAGE_ID}
+    hostedZone: ${HOSTED_ZONE}
+fips: ${FIPS}
+sshKey: ${SSH_KEY}
+publish: Internal
+pullSecret: {PULL_SECRET}
