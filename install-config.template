@@ -30,7 +30,7 @@ compute:
       - ${AZ3}
   replicas: ${WORKER_COUNT}
 metadata:
-  name: ${OCP_CLUSTER_NAME}
+  name: ${OCP_CLUSTER}
 networking:
   clusterNetwork:
   - cidr: ${CIDR_CLUSTER}
