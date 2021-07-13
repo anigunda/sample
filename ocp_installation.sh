@@ -77,6 +77,7 @@ INSTALLER_FILE=${WORK_DIR}/openshift-install
 PROPERTY_FILE=${WORK_DIR}/${OCP_CLUSTER}.properties
 INSTALL_TEMPLATE=${WORK_DIR}/install-config.template
 INSTALL_CONFIG=${WORK_DIR}/install-config.yaml
+export PULL_SECRET=\'${PULL_SECRET}\'
 
 # Function Calls
 check_installer
