@@ -38,6 +38,7 @@ networking:
   machineNetwork:
   - cidr: ${CIDR_PRIVATE1}
   - cidr: ${CIDR_PRIVATE2}
+  - cidr: ${CIDR_PRIVATE3}
   networkType: OpenShiftSDN
   serviceNetwork:
   - ${CIDR_SERVICE}

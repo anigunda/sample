@@ -51,6 +51,14 @@ function check_properties {
 	fi
 }
 
+# This function is used to run the ssh agent and add a ssh-key to the agent
+function ssh_setup {
+	export SSH_KEY=`cat ${SSH_PUBLIC}`
+	chmod 0600 ${SSH_PRIVATE}
+	eval "$(ssh-agent -s)"
+	ssh-add ${SSH_PRIVATE}
+}
+
 # This function is used to generate a final install-config.yaml
 # The install-config.yaml generated here is further used as input to OCP creation
 function generate_config {
@@ -69,7 +77,7 @@ function install_ocp {
 	echo "${INSTALLER_FILE} create cluster --dir=${INSTALL_DIR} --log-level=debug"
 }
 
-# Variables (both from Jenkins and Custom)
+# Initial Operations (both from Jenkins and Custom)
 WORK_DIR=${WORKSPACE}
 INSTALL_DIR=/opt/${OCP_CLUSTER}
 INSTALLER_TAR=${WORK_DIR}/openshift-install-linux.tar.gz
@@ -77,10 +85,14 @@ INSTALLER_FILE=${WORK_DIR}/openshift-install
 PROPERTY_FILE=${WORK_DIR}/${OCP_CLUSTER}.properties
 INSTALL_TEMPLATE=${WORK_DIR}/install-config.template
 INSTALL_CONFIG=${WORK_DIR}/install-config.yaml
+SSH_PUBLIC=${WORK_DIR}/sshPublicKey_${OCP_CLUSTER}
+SSH_PRIVATE=${WORK_DIR}/sshPrivateKey_${OCP_CLUSTER}
+mv PUBLIC_KEY ${SSH_PUBLIC} && mv PRIVATE_KEY ${SSH_PRIVATE}
 export PULL_SECRET=\'${PULL_SECRET}\'
 
 # Function Calls
 check_installer
 check_properties
+ssh_setup
 generate_config
 install_ocp
